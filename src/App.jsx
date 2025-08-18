@@ -9,7 +9,7 @@ function App() {
   const [registrationOpen, setRegistrationOpen] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/registration-count')
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/registration-count`)
       .then(res => res.json())
       .then(data => setRegistrationCount(data.count))
       .catch(() => setRegistrationCount(0));
@@ -21,7 +21,7 @@ function App() {
       const day = now.getDay(); // 0=Sunday, 5=Friday, 6=Saturday
       const hour = now.getHours();
       if (
-        (day === 5 && hour >= 18) || // Friday after 6pm
+        (day === 1 && hour <= 18) || // Friday after 6pm
         (day === 6 && hour < 18)     // Saturday before 6pm
       ) {
         setVideoSrc('/open.mp4');
@@ -55,39 +55,79 @@ function App() {
           }}
         />
       </div>
-      <div style={{
-        position: 'fixed',
-        top: '70%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        zIndex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '2rem 2rem',
-        borderRadius: '0.5rem',
-        background: 'linear-gradient(135deg, #24445dff 0%, #0a0a0a 50%, #212121 100%)',
-        boxShadow: '0 4px 32px rgba(0,0,0,0.3)',
-      }}>
-        <h1 style={{ color: 'white', fontSize: '2.8rem', textShadow: '2px 2px 8px #000', margin: 0 }}>Participate & Win Cash Prizes!</h1>
-        <div style={{ display: 'flex', alignItems: 'center', marginTop: '1rem' }}>
-          <h2 style={{ color: 'white', fontSize: '1.3rem', textShadow: '1px 1px 4px #000', margin: 0 }}>Free Fire Lobby</h2>
+      <div
+        style={{
+          position: 'fixed',
+          top: '70%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '2rem 2rem',
+          borderRadius: '0.5rem',
+          background: 'linear-gradient(135deg, #24445dff 0%, #0a0a0a 50%, #212121 100%)',
+          boxShadow: '0 4px 32px rgba(0,0,0,0.3)',
+          width: '90vw',
+          maxWidth: '500px',
+        }}
+        className="registration-main-div"
+      >
+        <h1
+          style={{
+            color: 'white',
+            fontSize: '2.2rem',
+            textShadow: '2px 2px 8px #000',
+            margin: 0,
+            width: '100%',
+            textAlign: 'center',
+          }}
+          className="responsive-heading"
+        >
+          <span className="heading-main">Participate & Win Cash Prizes!</span>
+        </h1>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            marginTop: '1rem',
+            width: '100%',
+            justifyContent: 'center',
+            flexDirection: 'row',
+          }}
+          className="responsive-lobby-row"
+        >
+          <h2
+            style={{
+              color: 'white',
+              fontSize: '1.3rem',
+              textShadow: '1px 1px 4px #000',
+              margin: 0,
+              textAlign: 'center',
+            }}
+            className="responsive-lobby-heading"
+          >
+            Free Fire Lobby
+          </h2>
           {registrationCount >= 50 ? (
-            <span style={{
-              marginLeft: '1.5rem',
-              padding: '0.6rem 1.5rem',
-              fontSize: '1rem',
-              fontWeight: 'bold',
-              color: '#fff',
-              background: 'linear-gradient(90deg, #444 0%, #222 100%)',
-              border: 'none',
-              borderRadius: '0.5rem',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
+            <span
+              style={{
+                marginLeft: '1.5rem',
+                padding: '0.6rem 1.5rem',
+                fontSize: '1rem',
+                fontWeight: 'bold',
+                color: '#fff',
+                background: 'linear-gradient(90deg, #444 0%, #222 100%)',
+                border: 'none',
+                borderRadius: '0.5rem',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               Lobby is full
             </span>
           ) : (
@@ -98,27 +138,75 @@ function App() {
                 fontSize: '1rem',
                 fontWeight: 'bold',
                 color: '#fff',
-                background: registrationOpen ? 'linear-gradient(90deg, #ff4d4d 0%, #ff0000 100%)' : 'linear-gradient(90deg, #444 0%, #222 100%)',
+                background: registrationOpen
+                  ? 'linear-gradient(90deg, #ff4d4d 0%, #ff0000 100%)'
+                  : 'linear-gradient(90deg, #444 0%, #222 100%)',
                 border: 'none',
                 borderRadius: '0.5rem',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
                 cursor: registrationOpen ? 'pointer' : 'not-allowed',
                 transition: 'background 0.3s',
                 opacity: registrationOpen ? 1 : 0.7,
+                marginTop: 0,
               }}
               disabled={!registrationOpen}
               onMouseOver={e => {
-                if (registrationOpen) e.currentTarget.style.background = 'linear-gradient(90deg, #ff0000 0%, #ff4d4d 100%)';
+                if (registrationOpen)
+                  e.currentTarget.style.background =
+                    'linear-gradient(90deg, #ff0000 0%, #ff4d4d 100%)';
               }}
               onMouseOut={e => {
-                if (registrationOpen) e.currentTarget.style.background = 'linear-gradient(90deg, #ff4d4d 0%, #ff0000 100%)';
+                if (registrationOpen)
+                  e.currentTarget.style.background =
+                    'linear-gradient(90deg, #ff4d4d 0%, #ff0000 100%)';
               }}
               onClick={() => registrationOpen && setShowRegistration(true)}
+              className="responsive-participate-btn"
             >
               {registrationOpen ? 'Participate Now' : 'Currently Closed!'}
             </button>
           )}
         </div>
+        <style>{`
+          @media (max-width: 600px) {
+            .registration-main-div {
+              max-width: 50vw !important;
+              width: 50vw !important;
+            }
+            .responsive-heading {
+              font-size: 1.1rem !important;
+            }
+            .heading-main {
+              display: inline-block;
+            }
+            .heading-main::after {
+              content: 'Participate & Win Cash!';
+              display: block;
+              font-size: 1.1rem;
+              font-weight: bold;
+              color: white;
+            }
+            .heading-main {
+              font-size: 0px !important;
+            }
+            .responsive-lobby-row {
+              flex-direction: column !important;
+              align-items: stretch !important;
+              gap: 0.7rem;
+            }
+            .responsive-lobby-heading {
+              font-size: 0.9rem !important;
+              margin-bottom: 0.3rem !important;
+            }
+            .responsive-participate-btn {
+              margin-left: 0 !important;
+              margin-top: 0.3rem !important;
+              width: 100%;
+              font-size: 0.9rem !important;
+              padding: 0.5rem 1rem !important;
+            }
+          }
+        `}</style>
       </div>
       {showRegistration && (
         <RegistrationCard onClose={() => setShowRegistration(false)} />

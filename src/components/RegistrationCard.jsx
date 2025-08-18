@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 
 const RegistrationCard = ({ onClose }) => {
+  // Change this value to update the entry fee
+  const entryFee = 25;
+  const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY;
   const [form, setForm] = useState({
     playerName: '',
     email: '',
@@ -9,6 +12,7 @@ const RegistrationCard = ({ onClose }) => {
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
 
   const handleChange = e => {
@@ -19,26 +23,66 @@ const RegistrationCard = ({ onClose }) => {
     e.preventDefault();
     setLoading(true);
     setMessage('');
-    try {
-      const res = await fetch('http://localhost:5000/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setMessage('Registration successful!, Details will be shared soon.');
-        setForm({ playerName: '', email: '', freeFireUID: '', phoneNumber: '' });
-        setTimeout(() => {
-          onClose();
-        }, 3000);
-      } else {
-        setMessage(data.error || 'Registration failed.');
-      }
-    } catch {
-      setMessage('Server error.');
+
+    // Load Razorpay script if not loaded
+    if (!window.Razorpay) {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.async = true;
+      document.body.appendChild(script);
+      script.onload = () => openRazorpay();
+      script.onerror = () => {
+        setMessage('Failed to load payment gateway.');
+        setLoading(false);
+      };
+    } else {
+      openRazorpay();
     }
-    setLoading(false);
+  };
+
+  const openRazorpay = () => {
+    const options = {
+      key: razorpayKey,
+      amount: entryFee * 100, // in paise
+      currency: 'INR',
+      name: 'Free Fire Registration',
+      description: 'Entry Fee',
+      handler: async function (response) {
+        // Payment successful, now submit registration
+        try {
+          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(form),
+          });
+          const data = await res.json();
+          if (res.ok) {
+            setForm({ playerName: '', email: '', freeFireUID: '', phoneNumber: '' });
+            setShowSuccessPopup(true);
+          } else {
+            setMessage(data.error || 'Registration failed.');
+          }
+        } catch {
+          setMessage('Server error.');
+        }
+        setLoading(false);
+      },
+      prefill: {
+        name: form.playerName,
+        email: form.email,
+        contact: form.phoneNumber,
+      },
+      theme: {
+        color: '#ff4d4d',
+      },
+      modal: {
+        ondismiss: () => {
+          setLoading(false);
+        }
+      }
+    };
+    const rzp = new window.Razorpay(options);
+    rzp.open();
   };
 
   return (
@@ -67,7 +111,12 @@ const RegistrationCard = ({ onClose }) => {
         flexDirection: 'column',
         justifyContent: 'center',
       }}>
-        <h2 style={{ marginBottom: '1rem' }}>Registration</h2>
+        <h2 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+          Registration Entry Fee
+          <span style={{ fontWeight: 'bold', color: '#ffd700', fontSize: '1.3rem', marginLeft: '0.5rem', display: 'flex', alignItems: 'center' }}>
+            ₹{entryFee}
+          </span>
+        </h2>
         <form onSubmit={handleSubmit}>
           <input
             type="text"
@@ -165,6 +214,61 @@ const RegistrationCard = ({ onClose }) => {
           </button>
         </form>
         {message && <div style={{ marginTop: '1rem', color: '#ff4d4d', textAlign: 'center' }}>{message}</div>}
+        {showSuccessPopup && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'rgba(0,0,0,0.7)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+          }}>
+            <div style={{
+              background: 'white',
+              color: '#222',
+              borderRadius: '1rem',
+              boxShadow: '0 4px 32px rgba(0,0,0,0.3)',
+              padding: '2.5rem 2rem',
+              minWidth: '320px',
+              maxWidth: '90vw',
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}>
+              <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>🎉 Congratulations!</h2>
+              <p style={{ fontSize: '1.1rem', marginBottom: '2rem', color: '#444' }}>
+                Your registration has been successfully completed.<br />
+                The details will be shared with you shortly via email.<br />
+                Stay tuned and keep an eye on your inbox!
+              </p>
+              <button
+                style={{
+                  padding: '0.8rem 2.2rem',
+                  fontSize: '1.1rem',
+                  background: 'linear-gradient(90deg, #ff4d4d 0%, #ff0000 100%)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '0.4rem',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                  marginTop: '1rem',
+                }}
+                onClick={() => {
+                  setShowSuccessPopup(false);
+                  onClose();
+                }}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        )}
         <button onClick={onClose} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', color: 'white', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>&times;</button>
       </div>
     </div>
