@@ -109,7 +109,7 @@ function App() {
             }}
             className="responsive-lobby-heading"
           >
-            Free Fire Lobby
+            Only for @LPU Students
           </h2>
           {registrationCount >= 50 ? (
             <span
@@ -170,11 +170,13 @@ function App() {
         <style>{`
           @media (max-width: 600px) {
             .registration-main-div {
-              max-width: 50vw !important;
-              width: 50vw !important;
+              max-width: 38vw !important;
+              width: 38vw !important;
+              padding-left: 0.5rem !important;
+              padding-right: 0.5rem !important;
             }
             .responsive-heading {
-              font-size: 1.1rem !important;
+              font-size: 0.8rem !important;
             }
             .heading-main {
               display: inline-block;
@@ -182,7 +184,7 @@ function App() {
             .heading-main::after {
               content: 'Participate & Win Cash!';
               display: block;
-              font-size: 1.1rem;
+              font-size: 0.7rem;
               font-weight: bold;
               color: white;
             }
@@ -192,18 +194,18 @@ function App() {
             .responsive-lobby-row {
               flex-direction: column !important;
               align-items: stretch !important;
-              gap: 0.7rem;
+              gap: 0.5rem;
             }
             .responsive-lobby-heading {
-              font-size: 0.9rem !important;
-              margin-bottom: 0.3rem !important;
+              font-size: 0.7rem !important;
+              margin-bottom: 0.2rem !important;
             }
             .responsive-participate-btn {
               margin-left: 0 !important;
-              margin-top: 0.3rem !important;
+              margin-top: 0.2rem !important;
               width: 100%;
-              font-size: 0.9rem !important;
-              padding: 0.5rem 1rem !important;
+              font-size: 0.7rem !important;
+              padding: 0.3rem 0.7rem !important;
             }
           }
         `}</style>
