@@ -21,8 +21,8 @@ function App() {
       const day = now.getDay(); // 0=Sunday, 5=Friday, 6=Saturday
       const hour = now.getHours();
       if (
-        (day === 1 && hour <= 22) || // Friday after 6pm
-        (day === 6 && hour < 18)     // Saturday before 6pm
+        (day === 1 && hour >= 1) || // Friday after 6pm
+        (day === 6 && hour < 23)     // Saturday before 6pm
       ) {
         setVideoSrc('/open.mp4');
         setRegistrationOpen(true);
