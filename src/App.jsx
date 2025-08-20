@@ -21,14 +21,14 @@ function App() {
       const day = now.getDay(); // 0=Sunday, 5=Friday, 6=Saturday
       const hour = now.getHours();
       if (
-        (day === 2 && hour >= 1) || // Friday after 6pm
-        (day === 6 && hour < 23)     // Saturday before 6pm
+        (day === 5 && hour >= 18) || // Friday after 6pm
+        (day === 6 && hour < 18)     // Saturday before 6pm
       ) {
         setVideoSrc('/open.mp4');
-        setRegistrationOpen(true);
+        setRegistrationOpen(false);
       } else {
         setVideoSrc('/fridayopen.mp4');
-        setRegistrationOpen(false);
+        setRegistrationOpen(true);
       }
     };
     updateVideoAndRegistration();
@@ -60,7 +60,7 @@ function App() {
           position: 'fixed',
           top: '70%',
           left: '50%',
-          transform: 'translate(-50%, -50%)',
+          transform: 'translate(-50%, -50%) scale(1)',
           zIndex: 1,
           display: 'flex',
           flexDirection: 'column',
@@ -72,8 +72,10 @@ function App() {
           boxShadow: '0 4px 32px rgba(0,0,0,0.3)',
           width: '90vw',
           maxWidth: '500px',
+          transition: 'transform 0.35s cubic-bezier(.68,-0.55,.27,1.55), opacity 0.35s',
+          opacity: 1,
         }}
-        className="registration-main-div"
+        className="registration-main-div popout"
       >
         <h1
           style={{
@@ -168,6 +170,21 @@ function App() {
           )}
         </div>
         <style>{`
+          .popout {
+            transform: translate(-50%, -50%) scale(0.7);
+            opacity: 0;
+            animation: popout-appear 1.5s cubic-bezier(.68,-0.55,.27,1.55) forwards;
+          }
+          @keyframes popout-appear {
+            0% {
+              transform: translate(-50%, -50%) scale(0.7);
+              opacity: 0;
+            }
+            100% {
+              transform: translate(-50%, -50%) scale(1);
+              opacity: 1;
+            }
+          }
           @media (max-width: 600px) {
             .registration-main-div {
               max-width: 38vw !important;
