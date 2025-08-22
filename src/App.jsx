@@ -25,10 +25,10 @@ function App() {
         (day === 6 && hour < 18)     // Saturday before 6pm
       ) {
         setVideoSrc('/open.mp4');
-        setRegistrationOpen(false);
+        setRegistrationOpen(true);
       } else {
         setVideoSrc('/fridayopen.mp4');
-        setRegistrationOpen(true);
+        setRegistrationOpen(false);
       }
     };
     updateVideoAndRegistration();
