@@ -24,12 +24,11 @@ function App() {
         (day === 5 && hour >= 18) || // Friday after 6pm
         (day === 6 && hour < 18)     // Saturday before 6pm
       ) {
-        setVideoSrc('/fridayopen.mp4');
-        setRegistrationOpen(false);
-        
-      } else {
         setVideoSrc('/open.mp4');
         setRegistrationOpen(true);
+      } else {
+        setVideoSrc('/fridayopen.mp4');
+        setRegistrationOpen(false);
         
       }
     };
